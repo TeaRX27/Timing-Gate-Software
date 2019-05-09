@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Diagnostics;
+using System.Management;
 using System.IO.Ports;
 
 namespace WindowsFormsApplication9
@@ -34,10 +35,21 @@ namespace WindowsFormsApplication9
             
         }
 
+        ManagementObjectCollection mbsList = null;
+        ManagementObjectSearcher mbs = new ManagementObjectSearcher("Select * From Win32_SerialPort");
+
         private void button1_Click_1(object sender, EventArgs e)
         {
+            PortBox.Items.Clear();
+            mbsList = mbs.Get();
+
+            foreach (ManagementObject mo in mbsList)
+            {
+                // Console.WriteLine("Description:{0}", mo["Description"].ToString());
+                PortBox.Items.Add(mo["Description"].ToString()+"("+ mo["DeviceID"].ToString()+")");
+            }
             string[] ports = SerialPort.GetPortNames();
-            PortBox.DataSource = ports;
+            //PortBox.DataSource = ports;
             if (SerialSettings.Visible)
             {
                 SerialSettings.Visible = false;
